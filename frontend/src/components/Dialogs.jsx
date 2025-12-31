@@ -20,7 +20,7 @@ export function SignInDialog({ open, onClose }) {
       slotProps={{
         paper: {
           sx: {
-            height: 500,
+            height: 550,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -53,7 +53,7 @@ export function SignUpDialog({ open, onClose }) {
       slotProps={{
         paper: {
           sx: {
-            height: 500,
+            height: 550,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -108,17 +108,6 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
           maxHeight: "80vh",
         }}
       >
-        <CardMedia
-          component="img"
-          image={recipe.img}
-          alt={recipe.title}
-          sx={{
-            width: "100%",
-            height: { xs: 200, sm: 250, md: 300 },
-            objectFit: "cover",
-          }}
-        />
-
         <Box sx={{ p: 3, overflowY: "auto", flexGrow: 1 }}>
           <Typography
             variant="h5"
