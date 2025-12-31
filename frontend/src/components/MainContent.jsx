@@ -231,18 +231,6 @@ export default function MainContent() {
                   className={focusedCardIndex === index ? "Mui-focused" : ""}
                   onClick={() => handleCardClick(card)}
                 >
-                  <CardMedia
-                    component="img"
-                    alt={card.title}
-                    image={card.img}
-                    sx={{
-                      height: { xs: 200, sm: 220, md: 260 },
-                      width: "100%",
-                      objectFit: "cover",
-                      borderBottom: "1px solid",
-                      borderColor: "divider",
-                    }}
-                  />
                   <StyledCardContent>
                     <Typography gutterBottom variant="caption">
                       {card.tag}

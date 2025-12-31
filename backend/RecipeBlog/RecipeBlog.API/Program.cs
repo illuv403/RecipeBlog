@@ -8,8 +8,16 @@ var connectionString = builder.Configuration.GetConnectionString("RecipeDB")
 
 builder.Services.AddDbContext<RecipeBlogDbContext>(options => options.UseMySQL(connectionString));
 
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.MapControllers();
 
 app.Run();
