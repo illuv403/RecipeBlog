@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecipeBlog.API.DAL;
+using RecipeBlog.API.DTO;
 using RecipeBlog.API.Models;
 
 namespace RecipeBlog.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/recipes")]
     [ApiController]
     public class RecipesController : ControllerBase
     {
@@ -18,9 +19,30 @@ namespace RecipeBlog.API.Controllers
 
         // GET: api/Recipe
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page)
         {
-            return await _context.Recipes.ToListAsync();
+            if (page < 1) return BadRequest();
+           
+            var total = await _context.Recipes.CountAsync();
+            var recipes = await _context.Recipes.Include(r => r.User).Skip((page - 1) * 6).Take(6).ToListAsync();
+
+            var recipesToReturn = recipes.Select(r => new RecipeDTO(
+                Id: r.Id,
+                Title: r.Title,
+                Description: r.Description,
+                CreatedAt: r.CreatedAt,
+                AuthorName: r.User.FullName
+            )).ToList();
+            
+            var totalPages = (int)Math.Ceiling((double)total / 6);
+
+            var returnBody = new
+            {
+                totalPages,
+                recipesToReturn
+            };
+            
+            return Ok(returnBody);
         }
 
         // GET: api/Recipe/5

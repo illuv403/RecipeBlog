@@ -8,7 +8,6 @@ import Button from "@mui/material/Button";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import CreateRecipe from "./CreateRecipe";
-import Autocomplete from "@mui/material/Autocomplete";
 
 export function SignInDialog({ open, onClose }) {
   return (
@@ -109,15 +108,6 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
         }}
       >
         <Box sx={{ p: 3, overflowY: "auto", flexGrow: 1 }}>
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            color="primary"
-            gutterBottom
-          >
-            {recipe.tag}
-          </Typography>
-
           <Typography variant="h5" fontWeight="bold" gutterBottom>
             {recipe.title}
           </Typography>
@@ -132,9 +122,19 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
             {recipe.description}
           </Typography>
 
-          <Typography variant="subtitle2" color="text.primary" sx={{ mb: 2 }}>
-            By {recipe.author}
-          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <Typography variant="subtitle2" color="text.primary" sx={{ mb: 2 }}>
+              By {recipe.authorName}
+            </Typography>
+
+            <Typography
+              variant="subtitle2"
+              color="text.primary"
+              sx={{ mb: 2, ml: "auto" }}
+            >
+              {new Date(recipe.createdAt).toLocaleDateString()}
+            </Typography>
+          </Box>
 
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <Button variant="contained" onClick={onClose}>

@@ -12,57 +12,8 @@ import { styled } from "@mui/material/styles";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Pagination from "@mui/material/Pagination";
 import { RecipeCardDialog, CreateRecipeDialog } from "./Dialogs";
-
-const cardData = [
-  {
-    img: "https://picsum.photos/800/450?random=1",
-    tag: "Engineering",
-    title: "Revolutionizing software development with cutting-edge tools",
-    description:
-      "Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.",
-    author: "Donny",
-  },
-  {
-    img: "https://picsum.photos/800/450?random=2",
-    tag: "Product",
-    title: "Innovative product features that drive success",
-    description:
-      "Explore the key features of our latest product release that are helping businesses achieve their goals. From user-friendly interfaces to ro2st functionality, learn why our product stands out.",
-    author: "Donny",
-  },
-  {
-    img: "https://picsum.photos/800/450?random=3",
-    tag: "Design",
-    title: "Designing for the future: trends and insights",
-    description:
-      "Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.",
-    author: "Donny",
-  },
-  {
-    img: "https://picsum.photos/800/450?random=4",
-    tag: "Company",
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    author: "Donny",
-  },
-  {
-    img: "https://picsum.photos/800/450?random=45",
-    tag: "Engineering",
-    title: "Pioneering sustainable engineering solutions",
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    author: "Donny",
-  },
-  {
-    img: "https://picsum.photos/800/450?random=6",
-    tag: "Product",
-    title: "Maximizing efficiency with our latest product updates",
-    description:
-      "Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.",
-    author: "Donny",
-  },
-];
+import fetcher from "./fetcherProvider";
+import useSWR from "swr";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -100,24 +51,6 @@ const StyledTypography = styled(Typography)({
   textOverflow: "ellipsis",
 });
 
-function Author({ author }) {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        gap: 2,
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "16px",
-      }}
-    >
-      <Typography variant="caption">{author}</Typography>
-      <Typography variant="caption">July 14, 2021</Typography>
-    </Box>
-  );
-}
-
 export function Search() {
   return (
     <FormControl sx={{ width: { xs: "100%", md: "25ch" } }} variant="outlined">
@@ -142,6 +75,7 @@ export default function MainContent() {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRecipe, setSelectedRecipe] = React.useState(null);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
+  const [page, setPage] = React.useState(1);
 
   const handleCardClick = (recipe) => {
     setSelectedRecipe(recipe);
@@ -160,6 +94,27 @@ export default function MainContent() {
   const handleBlur = () => {
     setFocusedCardIndex(null);
   };
+
+  const { data, error } = useSWR(
+    `http://localhost:5004/api/recipes?page=${page}`,
+    fetcher,
+  );
+
+  if (error) {
+    return (
+      <Typography variant="h1" gutterBottom>
+        {error}
+      </Typography>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Typography variant="h1" gutterBottom>
+        No data
+      </Typography>
+    );
+  }
 
   return (
     <Box
@@ -210,9 +165,9 @@ export default function MainContent() {
             </Box>
           </Box>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {cardData.map((card, index) => (
+            {data.recipesToReturn.map((card) => (
               <Box
-                key={index}
+                key={card.id}
                 sx={{
                   flex: {
                     xs: "1 1 100%",
@@ -225,16 +180,13 @@ export default function MainContent() {
               >
                 <StyledCard
                   variant="outlined"
-                  onFocus={() => handleFocus(index)}
+                  onFocus={() => handleFocus(card.id)}
                   onBlur={handleBlur}
                   tabIndex={0}
-                  className={focusedCardIndex === index ? "Mui-focused" : ""}
+                  className={focusedCardIndex === card.id ? "Mui-focused" : ""}
                   onClick={() => handleCardClick(card)}
                 >
                   <StyledCardContent>
-                    <Typography gutterBottom variant="caption">
-                      {card.tag}
-                    </Typography>
                     <Typography gutterBottom variant="h6">
                       {card.title}
                     </Typography>
@@ -242,13 +194,31 @@ export default function MainContent() {
                       {card.description}
                     </StyledTypography>
                   </StyledCardContent>
-                  <Author author={card.author} />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "16px",
+                    }}
+                  >
+                    <Typography variant="caption">{card.authorName}</Typography>
+                    <Typography variant="caption">
+                      {new Date(card.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </Box>
                 </StyledCard>
               </Box>
             ))}
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <Pagination count={10} />
+            <Pagination
+              count={data.totalPages}
+              page={page}
+              onChange={(_, value) => setPage(value)}
+            />
           </Box>
           <RecipeCardDialog
             open={openDialog}
