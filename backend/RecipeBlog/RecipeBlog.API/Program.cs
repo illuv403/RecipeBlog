@@ -10,6 +10,10 @@ builder.Services.AddDbContext<RecipeBlogDbContext>(options => options.UseMySQL(c
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options => options.AddPolicy("AllowFrontend",
+    p => p.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader())
+);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -19,5 +23,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapControllers();
+
+app.UseCors("AllowFrontend");
 
 app.Run();
