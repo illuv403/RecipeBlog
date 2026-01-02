@@ -102,7 +102,7 @@ export default function MainContent() {
 
   if (error) {
     return (
-      <Typography variant="h1" gutterBottom>
+      <Typography variant="h5" gutterBottom>
         {error}
       </Typography>
     );
@@ -110,8 +110,8 @@ export default function MainContent() {
 
   if (!data) {
     return (
-      <Typography variant="h1" gutterBottom>
-        No data
+      <Typography variant="h5" gutterBottom>
+        Loading...
       </Typography>
     );
   }
