@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./theme/AppTheme";
+import axios from "axios";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -53,31 +54,18 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn(props) {
+export default function SignIn({ onClose, ...props }) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
@@ -86,7 +74,7 @@ export default function SignIn(props) {
       setEmailErrorMessage("");
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
@@ -96,6 +84,22 @@ export default function SignIn(props) {
     }
 
     return isValid;
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const [Email, Password] = [email, password];
+    axios.post(
+      "http://localhost:5004/api/session/login",
+      {},
+      {
+        params: {
+          Email,
+          Password,
+        },
+      },
+    );
+    onClose();
   };
 
   return (
@@ -136,6 +140,9 @@ export default function SignIn(props) {
                 fullWidth
                 variant="outlined"
                 color={emailError ? "error" : "primary"}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
               />
             </FormControl>
             <FormControl>
@@ -153,6 +160,9 @@ export default function SignIn(props) {
                 fullWidth
                 variant="outlined"
                 color={passwordError ? "error" : "primary"}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
               />
             </FormControl>
             <Button

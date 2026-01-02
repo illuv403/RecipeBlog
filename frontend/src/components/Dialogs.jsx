@@ -36,7 +36,7 @@ export function SignInDialog({ open, onClose }) {
           alignItems: "center",
         }}
       >
-        <SignIn />
+        <SignIn onClose={onClose} />
       </DialogContent>
     </Dialog>
   );
