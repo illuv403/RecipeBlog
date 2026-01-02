@@ -69,7 +69,7 @@ export function SignUpDialog({ open, onClose }) {
           alignItems: "center",
         }}
       >
-        <SignUp />
+        <SignUp onClose={onClose} />
       </DialogContent>
     </Dialog>
   );
