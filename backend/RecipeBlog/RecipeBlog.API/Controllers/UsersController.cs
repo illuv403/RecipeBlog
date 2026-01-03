@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RecipeBlog.API.DAL;
 using RecipeBlog.API.DTO;
 using RecipeBlog.API.Models;
+using RecipeBlog.API.Services;
 
 namespace RecipeBlog.API.Controllers
 {
@@ -12,11 +13,13 @@ namespace RecipeBlog.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
+        private readonly ITokenService _tokenService;
         private readonly PasswordHasher<User> _passwordHasher = new();
 
-        public UsersController(RecipeBlogDbContext context)
+        public UsersController(RecipeBlogDbContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: api/Users
@@ -92,10 +95,8 @@ namespace RecipeBlog.API.Controllers
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-
-            var responseUser = new ResponseUserDTO(newUser.Id, user.FullName, user.UserEmail);
-
-            return CreatedAtAction("GetUser", new { id = responseUser.Id }, responseUser);
+            
+            return Ok(new {Token = _tokenService.GenerateToken(newUser.Email)});
         }
 
         // DELETE: api/Users/5
