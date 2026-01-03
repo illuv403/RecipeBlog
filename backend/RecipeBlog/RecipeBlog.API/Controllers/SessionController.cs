@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RecipeBlog.API.DAL;
 using RecipeBlog.API.DTO;
 using RecipeBlog.API.Models;
+using RecipeBlog.API.Services;
 
 namespace RecipeBlog.API.Controllers
 {
@@ -13,11 +14,13 @@ namespace RecipeBlog.API.Controllers
     public class SessionController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
+        private readonly ITokenService _tokenService;
         private readonly PasswordHasher<User> _passwordHasher = new();
         
-        public SessionController(RecipeBlogDbContext context)
+        public SessionController(RecipeBlogDbContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         [HttpPost("login")]
@@ -31,7 +34,7 @@ namespace RecipeBlog.API.Controllers
             
             if (passwordCheckResult == PasswordVerificationResult.Failed) return Unauthorized();
             
-            return Ok();
+            return Ok(new {Token = _tokenService.GenerateToken(foundUser.Email)});
         }
     }
 }
