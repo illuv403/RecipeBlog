@@ -11,6 +11,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./theme/AppTheme";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -61,6 +62,7 @@ export default function SignIn({ onClose, ...props }) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const { t } = useTranslation();
 
   const validateInputs = () => {
     let isValid = true;

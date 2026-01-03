@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RecipeBlog.API.DAL;
 using RecipeBlog.API.DTO;
 using RecipeBlog.API.Models;
+using DeepL;
 
 namespace RecipeBlog.API.Controllers
 {
@@ -11,25 +12,30 @@ namespace RecipeBlog.API.Controllers
     public class RecipesController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
-
-        public RecipesController(RecipeBlogDbContext context)
+        private IConfiguration _config;
+        
+        public RecipesController(RecipeBlogDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         // GET: api/Recipe
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page)
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page, [FromQuery] string lang)
         {
+            var authKey = _config.GetValue<string>("DeeplAPIKey");
+            var client = new DeepLClient(authKey);
+            
             if (page < 1) return BadRequest();
            
             var total = await _context.Recipes.CountAsync();
             var recipes = await _context.Recipes.Include(r => r.User).Skip((page - 1) * 6).Take(6).ToListAsync();
 
-            var recipesToReturn = recipes.Select(r => new RecipeDTO(
+            var recipesToReturn = recipes.Select(async r => new RecipeDTO(
                 Id: r.Id,
-                Title: r.Title,
-                Description: r.Description,
+                Title: lang=="pl" ? (await client.TranslateTextAsync(r.Title, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Title,
+                Description: lang=="pl" ? (await client.TranslateTextAsync(r.Description, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Description,
                 CreatedAt: r.CreatedAt,
                 AuthorName: r.User.FullName
             )).ToList();
