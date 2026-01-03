@@ -69,7 +69,7 @@ export default function SignIn({ onClose, ...props }) {
 
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
+      setEmailErrorMessage(t("signin.email.error"));
       isValid = false;
     } else {
       setEmailError(false);
@@ -78,7 +78,7 @@ export default function SignIn({ onClose, ...props }) {
 
     if (!password || password.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
+      setPasswordErrorMessage(t("signin.password.error"));
       isValid = false;
     } else {
       setPasswordError(false);
@@ -114,7 +114,7 @@ export default function SignIn({ onClose, ...props }) {
             variant="h4"
             sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
-            Sign in
+            {t("signin.title")}
           </Typography>
           <Box
             component="form"
@@ -128,14 +128,14 @@ export default function SignIn({ onClose, ...props }) {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">{t("signin.email.label")}</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
                 id="email"
                 type="email"
                 name="email"
-                placeholder="your@email.com"
+                placeholder={t("signin.email.placeholder")}
                 autoComplete="email"
                 autoFocus
                 required
@@ -153,7 +153,7 @@ export default function SignIn({ onClose, ...props }) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
-                placeholder="••••••"
+                placeholder={t("signin.password.placeholder")}
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -173,7 +173,7 @@ export default function SignIn({ onClose, ...props }) {
               variant="contained"
               onClick={validateInputs}
             >
-              Sign in
+              {t("signin.submit")}
             </Button>
           </Box>
         </Card>
