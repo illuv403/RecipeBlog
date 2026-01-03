@@ -1,0 +1,78 @@
+{
+  "signup": {
+    "title": "Zarejestruj się",
+    "fullName": {
+      "label": "Imię i nazwisko",
+      "placeholder": "Jon Snow",
+      "error": "Imię i nazwisko jest wymagane."
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "twoj@email.com",
+      "error": "Wprowadź poprawny adres email."
+    },
+    "password": {
+      "label": "Hasło",
+      "placeholder": "••••••",
+      "error": "Hasło musi mieć co najmniej 6 znaków."
+    },
+    "submit": "Zarejestruj się"
+  },
+  "signin": {
+    "title": "Zaloguj się",
+    "email": {
+      "label": "Email",
+      "placeholder": "twoj@email.com",
+      "error": "Wprowadź poprawny adres email."
+    },
+    "password": {
+      "label": "Hasło",
+      "placeholder": "••••••",
+      "error": "Hasło musi mieć co najmniej 6 znaków."
+    },
+    "submit": "Zaloguj się"
+  },
+  "recipes": {
+    "title": "Książka kucharska",
+    "subtitle": "Znajdź przepis lub dodaj własny!",
+    "search": {
+      "placeholder": "Szukaj…",
+      "ariaLabel": "wyszukiwanie"
+    },
+    "actions": {
+      "newRecipe": "Nowy przepis"
+    },
+    "states": {
+      "loading": "Ładowanie...",
+      "error": "Wystąpił błąd podczas ładowania przepisów."
+    }
+  },
+  "footer": {
+    "copyright": "Prawa autorskie ©"
+  },
+  "dialogs": {
+    "recipe": {
+      "byAuthor": "Autor: {{author}}",
+      "close": "Zamknij"
+    }
+  },
+  "createRecipe": {
+    "title": "Utwórz przepis",
+    "form": {
+      "recipeTitle": {
+        "label": "Tytuł przepisu",
+        "placeholder": "Buldak z odrobiną lekkiego)))"
+      },
+      "description": {
+        "label": "Opis",
+        "placeholder": "Opisz jak go przygotować..."
+      },
+      "submit": "Utwórz przepis"
+    }
+  },
+  "appBar": {
+    "signIn": "Zaloguj się",
+    "signUp": "Zarejestruj się",
+    "menuButton": "Przycisk menu"
+  }
+}

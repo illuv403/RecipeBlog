@@ -1,0 +1,78 @@
+{
+  "signup": {
+    "title": "Sign up",
+    "fullName": {
+      "label": "Full name",
+      "placeholder": "Jon Snow",
+      "error": "Name is required."
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "your@email.com",
+      "error": "Please enter a valid email address."
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "••••••",
+      "error": "Password must be at least 6 characters long."
+    },
+    "submit": "Sign up"
+  },
+  "signin": {
+    "title": "Sign in",
+    "email": {
+      "label": "Email",
+      "placeholder": "your@email.com",
+      "error": "Please enter a valid email address."
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "••••••",
+      "error": "Password must be at least 6 characters long."
+    },
+    "submit": "Sign in"
+  },
+  "recipes": {
+    "title": "Recipe Book",
+    "subtitle": "Find a recipe or leave yours here!",
+    "search": {
+      "placeholder": "Search…",
+      "ariaLabel": "search"
+    },
+    "actions": {
+      "newRecipe": "New Recipe"
+    },
+    "states": {
+      "loading": "Loading...",
+      "error": "Something went wrong while loading recipes."
+    }
+  },
+  "footer": {
+    "copyright": "Copyright ©"
+  },
+  "dialogs": {
+    "recipe": {
+      "byAuthor": "By {{author}}",
+      "close": "Close"
+    }
+  },
+  "createRecipe": {
+    "title": "Create Recipe",
+    "form": {
+      "recipeTitle": {
+        "label": "Recipe Title",
+        "placeholder": "Buldak with a bit of light)))"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Describe how to make it..."
+      },
+      "submit": "Create Recipe"
+    }
+  },
+  "appBar": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "menuButton": "Menu button"
+  }
+}
