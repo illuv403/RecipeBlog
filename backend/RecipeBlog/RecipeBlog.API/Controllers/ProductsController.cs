@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecipeBlog.API.DAL;
@@ -7,6 +8,7 @@ namespace RecipeBlog.API.Controllers
 {
     [Route("api/products")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
