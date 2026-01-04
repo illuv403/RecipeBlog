@@ -101,17 +101,29 @@ export default function SignUp({ onClose, ...props }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const [FullName, UserEmail, UserPassword] = [name, email, password];
-    axios.post(
-      "http://localhost:5004/api/users",
-      {},
-      {
-        params: {
-          FullName,
-          UserEmail,
-          UserPassword,
+    axios
+      .post(
+        "http://localhost:5004/api/users",
+        {},
+        {
+          params: {
+            FullName,
+            UserEmail,
+            UserPassword,
+          },
         },
-      },
-    );
+      )
+      .then(function (response) {
+        const token = response.data.token;
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const email = payload.sub;
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", email);
+      })
+      .then(function () {
+        <Alert severity="error">An error occured while signing up.</Alert>;
+      });
     onClose();
   };
 
