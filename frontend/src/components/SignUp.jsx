@@ -11,6 +11,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./theme/AppTheme";
 import axios from "axios";
+import Alert from "@mui/material/Alert";
 import { useTranslation } from "react-i18next";
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -103,17 +104,29 @@ export default function SignUp({ onClose, ...props }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const [FullName, UserEmail, UserPassword] = [name, email, password];
-    axios.post(
-      "http://localhost:5004/api/users",
-      {},
-      {
-        params: {
-          FullName,
-          UserEmail,
-          UserPassword,
+    axios
+      .post(
+        "http://localhost:5004/api/users",
+        {},
+        {
+          params: {
+            FullName,
+            UserEmail,
+            UserPassword,
+          },
         },
-      },
-    );
+      )
+      .then(function (response) {
+        const token = response.data.token;
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const email = payload.sub;
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", email);
+      })
+      .then(function () {
+        <Alert severity="error">An error occured while signing up.</Alert>;
+      });
     onClose();
   };
 
