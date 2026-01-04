@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace RecipeBlog.API.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
@@ -77,6 +79,7 @@ namespace RecipeBlog.API.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> PostUser([FromQuery] CreateUserDTO user)
         {
             Console.WriteLine(user);

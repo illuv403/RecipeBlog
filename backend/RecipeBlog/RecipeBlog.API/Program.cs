@@ -48,9 +48,9 @@ app.UseSwaggerUI();
 
 app.MapControllers();
 
+app.UseCors("AllowFrontend");
+    
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowFrontend");
 
 app.Run();

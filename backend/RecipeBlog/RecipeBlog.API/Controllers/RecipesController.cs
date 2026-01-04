@@ -4,11 +4,13 @@ using RecipeBlog.API.DAL;
 using RecipeBlog.API.DTO;
 using RecipeBlog.API.Models;
 using DeepL;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RecipeBlog.API.Controllers
 {
     [Route("api/recipes")]
     [ApiController]
+    [Authorize]
     public class RecipesController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
@@ -22,6 +24,7 @@ namespace RecipeBlog.API.Controllers
 
         // GET: api/Recipe
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page, [FromQuery] string lang)
         {
             var authKey = _config.GetValue<string>("DeeplAPIKey");
