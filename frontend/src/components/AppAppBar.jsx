@@ -11,6 +11,8 @@ import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ColorModeIconDropdown from "./theme/ColorModelIconDropdown";
+import Select from "@mui/material/Select";
+import { useTranslation } from "react-i18next";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -30,9 +32,14 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar({ setSignIn, setSignUp }) {
   const [open, setOpen] = React.useState(false);
+  const { t, i18n } = useTranslation();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
+  };
+
+  const handleLanguageChange = (e) => {
+    i18n.changeLanguage(e.target.value);
   };
 
   return (
@@ -53,6 +60,22 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
               display: { xs: "none", md: "flex" },
               gap: 1,
               alignItems: "center",
+            }}
+          >
+            <Select
+              onChange={handleLanguageChange}
+              value={i18n.language || "en"}
+              sx={{ minWidth: 75 }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="pl">Polish</MenuItem>
+            </Select>
+          </Box>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              gap: 1,
+              alignItems: "center",
               ml: "auto",
             }}
           >
@@ -62,7 +85,7 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
               size="small"
               onClick={setSignIn}
             >
-              Sign in
+              {t("appBar.signIn")}
             </Button>
             <Button
               color="primary"
@@ -70,13 +93,16 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
               size="small"
               onClick={setSignUp}
             >
-              Sign up
+              {t("appBar.signUp")}
             </Button>
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />
-            <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
+            <IconButton
+              aria-label={t("appBar.menuButton")}
+              onClick={toggleDrawer(true)}
+            >
               <MenuIcon />
             </IconButton>
             <Drawer
@@ -107,7 +133,7 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
                     fullWidth
                     onClick={setSignUp}
                   >
-                    Sign up
+                    {t("appBar.signUp")}
                   </Button>
                 </MenuItem>
                 <MenuItem>
@@ -117,7 +143,7 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
                     fullWidth
                     onClick={setSignIn}
                   >
-                    Sign in
+                    {t("appBar.signIn")}
                   </Button>
                 </MenuItem>
               </Box>

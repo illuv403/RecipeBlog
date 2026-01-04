@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -14,6 +13,7 @@ import Pagination from "@mui/material/Pagination";
 import { RecipeCardDialog, CreateRecipeDialog } from "./Dialogs";
 import fetcher from "./fetcherProvider";
 import useSWR from "swr";
+import { useTranslation } from "react-i18next";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -52,18 +52,20 @@ const StyledTypography = styled(Typography)({
 });
 
 export function Search() {
+  const { t } = useTranslation();
+
   return (
     <FormControl sx={{ width: { xs: "100%", md: "25ch" } }} variant="outlined">
       <OutlinedInput
         size="small"
-        placeholder="Search…"
+        placeholder={t("recipes.search.placeholder")}
         startAdornment={
           <InputAdornment position="start" sx={{ color: "text.primary" }}>
             <SearchRoundedIcon fontSize="small" />
           </InputAdornment>
         }
         inputProps={{
-          "aria-label": "search",
+          "aria-label": t("recipes.search.ariaLabel"),
         }}
       />
     </FormControl>
@@ -76,6 +78,7 @@ export default function MainContent() {
   const [selectedRecipe, setSelectedRecipe] = React.useState(null);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const { t, i18n } = useTranslation();
 
   const handleCardClick = (recipe) => {
     setSelectedRecipe(recipe);
@@ -96,14 +99,14 @@ export default function MainContent() {
   };
 
   const { data, error } = useSWR(
-    `http://localhost:5004/api/recipes?page=${page}`,
+    `http://localhost:5004/api/recipes?page=${page}&lang=${i18n.language}`,
     fetcher,
   );
 
   if (error) {
     return (
       <Typography variant="h5" gutterBottom>
-        {error}
+        {t("recipes.states.error")}
       </Typography>
     );
   }
@@ -111,7 +114,7 @@ export default function MainContent() {
   if (!data) {
     return (
       <Typography variant="h5" gutterBottom>
-        Loading...
+        {t("recipes.states.loading")}
       </Typography>
     );
   }
@@ -134,9 +137,9 @@ export default function MainContent() {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <Box>
             <Typography variant="h1" gutterBottom>
-              Recipe Book
+              {t("recipes.title")}
             </Typography>
-            <Typography>Find a recipe or leave yours here!</Typography>
+            <Typography>{t("recipes.subtitle")}</Typography>
           </Box>
           <Box sx={{ display: { xs: "flex", sm: "none" }, width: "100%" }}>
             <Search />
@@ -157,7 +160,7 @@ export default function MainContent() {
                 size="small"
                 onClick={() => setOpenCreateDialog(true)}
               >
-                New Recipe
+                {t("recipes.actions.newRecipe")}
               </Button>
             </Box>
             <Box sx={{ display: { xs: "none", sm: "flex" } }}>
@@ -167,7 +170,7 @@ export default function MainContent() {
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {data.recipesToReturn.map((card) => (
               <Box
-                key={card.id}
+                key={card.result.id}
                 sx={{
                   flex: {
                     xs: "1 1 100%",
@@ -180,18 +183,20 @@ export default function MainContent() {
               >
                 <StyledCard
                   variant="outlined"
-                  onFocus={() => handleFocus(card.id)}
+                  onFocus={() => handleFocus(card.result.id)}
                   onBlur={handleBlur}
                   tabIndex={0}
-                  className={focusedCardIndex === card.id ? "Mui-focused" : ""}
+                  className={
+                    focusedCardIndex === card.result.id ? "Mui-focused" : ""
+                  }
                   onClick={() => handleCardClick(card)}
                 >
                   <StyledCardContent>
                     <Typography gutterBottom variant="h6">
-                      {card.title}
+                      {card.result.title}
                     </Typography>
                     <StyledTypography variant="body2" color="text.secondary">
-                      {card.description}
+                      {card.result.description}
                     </StyledTypography>
                   </StyledCardContent>
                   <Box
@@ -204,9 +209,11 @@ export default function MainContent() {
                       padding: "16px",
                     }}
                   >
-                    <Typography variant="caption">{card.authorName}</Typography>
                     <Typography variant="caption">
-                      {new Date(card.createdAt).toLocaleDateString()}
+                      {card.result.authorName}
+                    </Typography>
+                    <Typography variant="caption">
+                      {new Date(card.result.createdAt).toLocaleDateString()}
                     </Typography>
                   </Box>
                 </StyledCard>

@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import AppTheme from "./theme/AppTheme";
+import { useTranslation } from "react-i18next";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -31,6 +32,7 @@ const Container = styled(Stack)(({ theme }) => ({
 export default function CreateRecipe({ user, ...props }) {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const { t } = useTranslation();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -50,7 +52,7 @@ export default function CreateRecipe({ user, ...props }) {
       <CssBaseline enableColorScheme />
       <Container direction="column" justifyContent="center">
         <Card variant="outlined">
-          <Typography variant="h4">Create Recipe</Typography>
+          <Typography variant="h4">{t("createRecipe.title")}</Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -58,10 +60,10 @@ export default function CreateRecipe({ user, ...props }) {
           >
             <FormControl>
               <TextField
-                label="Recipe Title"
+                label={t("createRecipe.form.recipeTitle.label")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Buldak with a bit of light)))"
+                placeholder={t("createRecipe.form.recipeTitle.placeholder")}
                 required
                 fullWidth
                 sx={{
@@ -73,10 +75,10 @@ export default function CreateRecipe({ user, ...props }) {
             </FormControl>
             <FormControl>
               <TextField
-                label="Description"
+                label={t("createRecipe.form.description.label")}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe how to make it..."
+                placeholder={t("createRecipe.form.description.placeholder")}
                 multiline
                 rows={4}
                 required
@@ -89,7 +91,7 @@ export default function CreateRecipe({ user, ...props }) {
               />
             </FormControl>
             <Button type="submit" variant="contained" fullWidth>
-              Create Recipe
+              {t("createRecipe.form.submit")}
             </Button>
           </Box>
         </Card>

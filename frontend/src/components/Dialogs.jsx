@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import CreateRecipe from "./CreateRecipe";
+import { useTranslation } from "react-i18next";
 
 export function SignInDialog({ open, onClose }) {
   return (
@@ -76,6 +77,8 @@ export function SignUpDialog({ open, onClose }) {
 }
 
 export function RecipeCardDialog({ open, onClose, recipe }) {
+  const { t } = useTranslation();
+
   if (!recipe) return null;
 
   return (
@@ -109,7 +112,7 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
       >
         <Box sx={{ p: 3, overflowY: "auto", flexGrow: 1 }}>
           <Typography variant="h5" fontWeight="bold" gutterBottom>
-            {recipe.title}
+            {recipe.result.title}
           </Typography>
 
           <Divider sx={{ mb: 2 }} />
@@ -119,12 +122,14 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
             color="text.secondary"
             sx={{ whiteSpace: "pre-line", mb: 3 }}
           >
-            {recipe.description}
+            {recipe.result.description}
           </Typography>
 
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Typography variant="subtitle2" color="text.primary" sx={{ mb: 2 }}>
-              By {recipe.authorName}
+              {t("dialogs.recipe.byAuthor", {
+                author: recipe.result.authorName,
+              })}
             </Typography>
 
             <Typography
@@ -132,13 +137,13 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
               color="text.primary"
               sx={{ mb: 2, ml: "auto" }}
             >
-              {new Date(recipe.createdAt).toLocaleDateString()}
+              {new Date(recipe.result.createdAt).toLocaleDateString()}
             </Typography>
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <Button variant="contained" onClick={onClose}>
-              Close
+              {t("dialogs.recipe.close")}
             </Button>
           </Box>
         </Box>

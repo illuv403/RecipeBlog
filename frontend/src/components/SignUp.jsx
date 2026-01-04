@@ -12,6 +12,7 @@ import { styled } from "@mui/material/styles";
 import AppTheme from "./theme/AppTheme";
 import axios from "axios";
 import Alert from "@mui/material/Alert";
+import { useTranslation } from "react-i18next";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -65,13 +66,14 @@ export default function SignUp({ onClose, ...props }) {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const { t } = useTranslation();
 
   const validateInputs = () => {
     let isValid = true;
 
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
+      setEmailErrorMessage(t("signup.email.error"));
       isValid = false;
     } else {
       setEmailError(false);
@@ -80,7 +82,7 @@ export default function SignUp({ onClose, ...props }) {
 
     if (!password || password.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
+      setPasswordErrorMessage(t("signup.password.error"));
       isValid = false;
     } else {
       setPasswordError(false);
@@ -89,7 +91,7 @@ export default function SignUp({ onClose, ...props }) {
 
     if (!name || name.length < 1) {
       setNameError(true);
-      setNameErrorMessage("Name is required.");
+      setNameErrorMessage(t("signup.fullName.error"));
       isValid = false;
     } else {
       setNameError(false);
@@ -138,7 +140,7 @@ export default function SignUp({ onClose, ...props }) {
             variant="h4"
             sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
-            Sign up
+            {t("signup.title")}
           </Typography>
           <Box
             component="form"
@@ -146,14 +148,14 @@ export default function SignUp({ onClose, ...props }) {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
+              <FormLabel htmlFor="name">{t("signup.fullName.label")}</FormLabel>
               <TextField
                 autoComplete="name"
                 name="name"
                 required
                 fullWidth
                 id="name"
-                placeholder="Jon Snow"
+                placeholder={t("signup.fullName.placeholder")}
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? "error" : "primary"}
@@ -163,12 +165,12 @@ export default function SignUp({ onClose, ...props }) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">{t("signup.email.label")}</FormLabel>
               <TextField
                 required
                 fullWidth
                 id="email"
-                placeholder="your@email.com"
+                placeholder={t("signup.email.placeholder")}
                 name="email"
                 autoComplete="email"
                 variant="outlined"
@@ -181,12 +183,14 @@ export default function SignUp({ onClose, ...props }) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password">
+                {t("signup.password.label")}
+              </FormLabel>
               <TextField
                 required
                 fullWidth
                 name="password"
-                placeholder="••••••"
+                placeholder={t("signup.password.placeholder")}
                 type="password"
                 id="password"
                 autoComplete="new-password"
@@ -205,7 +209,7 @@ export default function SignUp({ onClose, ...props }) {
               variant="contained"
               onClick={validateInputs}
             >
-              Sign up
+              {t("signup.submit")}
             </Button>
           </Box>
         </Card>

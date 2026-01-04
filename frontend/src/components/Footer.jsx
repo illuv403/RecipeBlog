@@ -8,11 +8,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { useTranslation } from "react-i18next";
 
 function Copyright() {
+  const { t } = useTranslation();
   return (
     <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-      {"Copyright © "}
+      {t("footer.copyright")}
       <Link color="text.secondary" href="https://github.com/illuv403">
         Anton Shcherban
       </Link>
