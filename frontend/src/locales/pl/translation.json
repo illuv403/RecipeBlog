@@ -67,12 +67,35 @@
         "label": "Opis",
         "placeholder": "Opisz jak go przygotować..."
       },
+      "product": {
+        "selectProduct": "Wybierz produkt",
+        "amount": "Kwota",
+        "searchProducts": "Wyszukaj produkty"
+      },
       "submit": "Utwórz przepis"
+    },
+    "states": {
+      "loading": "Ładowanie..."
+    },
+    "errors": {
+      "titleRequired": "Tytuł jest wymagany",
+      "descriptionRequired": "Opis jest wymagany",
+      "productRequired": "Wybierz produkt",
+      "amountRequired": "Podaj ilość",
+      "productExists": "Ten produkt jest już na liście",
+      "atLeastOneProduct": "Dodaj przynajmniej jeden produkt"
     }
   },
   "appBar": {
     "signIn": "Zaloguj się",
     "signUp": "Zarejestruj się",
-    "menuButton": "Przycisk menu"
+    "menuButton": "Przycisk menu",
+    "logout": "Wyloguj się"
+  },
+  "auth": {
+    "errors": {
+      "loginFailed": "Wystąpił błąd podczas logowania",
+      "signupFailed": "Wystąpił błąd podczas rejestracji"
+    }
   }
 }

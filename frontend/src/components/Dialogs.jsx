@@ -117,8 +117,8 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
 
           {recipe.result.products.map((product) => (
             <Typography key={product.id} variant="body1">
-              {product.name} {product.amount}
-              {product.measureUnit}
+              {product.result.name} {product.result.amount}
+              {product.result.measureUnit}
             </Typography>
           ))}
 

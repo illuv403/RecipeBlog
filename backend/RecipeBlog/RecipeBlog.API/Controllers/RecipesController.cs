@@ -14,7 +14,7 @@ namespace RecipeBlog.API.Controllers
     public class RecipesController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
         
         public RecipesController(RecipeBlogDbContext context, IConfiguration config)
         {
@@ -44,10 +44,10 @@ namespace RecipeBlog.API.Controllers
                 Description: lang=="pl" ? (await client.TranslateTextAsync(r.Description, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Description,
                 CreatedAt: r.CreatedAt,
                 AuthorName: r.User.FullName,
-                Products: r.RecipeProducts.Select(rp => new ResponseProductDTO(
-                        Name: rp.Product.Name,
+                Products: r.RecipeProducts.Select(async rp => new ResponseProductDTO(
+                        Name: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.Name, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.Name,
                         Amount: rp.Amount,
-                        MeasureUnit: rp.Product.MeasureUnit
+                        MeasureUnit: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.MeasureUnit, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.MeasureUnit
                     )).ToList()
             )).ToList();
             

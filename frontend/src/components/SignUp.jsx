@@ -125,7 +125,7 @@ export default function SignUp({ onClose, setSignedUp, ...props }) {
         localStorage.setItem("email", email);
       })
       .then(function (error) {
-        if (error) alert("An error occured while signing up");
+        if (error) alert(t("auth.errors.signupFailed"));
       });
     setSignedUp();
     onClose();
