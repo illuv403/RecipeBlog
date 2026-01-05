@@ -6,6 +6,7 @@ public class User
     public string FullName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string? Password { get; set; } = null;
+    public bool IsAdmin { get; set; } = false;
     
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
 }
