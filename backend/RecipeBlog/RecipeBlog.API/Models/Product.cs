@@ -6,5 +6,5 @@ public class Product
     public string Name { get; set; }
     public string MeasureUnit { get; set; }
     
-    public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
+    public ICollection<RecipeProduct> RecipeProducts { get; set; } = new List<RecipeProduct>();
 }
