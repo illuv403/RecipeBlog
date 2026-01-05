@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RecipeBlog.API.DAL;
+using RecipeBlog.API.Helpers;
 using RecipeBlog.API.Helpers.Options;
 using RecipeBlog.API.Services;
 
@@ -26,7 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidIssuer = JWTConfig["Issuer"],
-        ValidAudience = JWTConfig["Audience"], 
+        ValidAudience = JWTConfig["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig["Key"])),
         ValidateLifetime = true
     };
@@ -43,14 +44,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<RecipeBlogDbContext>();
+    db.Database.Migrate();
+    await DbSeeder.SeedAsync(db);
+}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapControllers();
-
 app.UseCors("AllowFrontend");
-    
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

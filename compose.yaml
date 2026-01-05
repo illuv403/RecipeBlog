@@ -9,4 +9,59 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - 3306:3306
+      - "3306:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  api:
+    container_name: recipe-blog-api
+    build:
+      context: ./backend/RecipeBlog/RecipeBlog.API
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5004
+      ConnectionStrings__RecipeDB: >
+        Server=mysql;
+        Port=3306;
+        Database=${MYSQL_DATABASE};
+        User=${MYSQL_USER};
+        Password=${MYSQL_PASSWORD};
+        AllowPublicKeyRetrieval=true;
+      JWT__Issuer: ${JWT_ISSUER}
+      JWT__Audience: ${JWT_AUDIENCE}
+      JWT__Key: ${JWT_KEY}
+      DeeplAPIKey: ${DEEPL_API_KEY}
+    ports:
+      - "5004:5004"
+  frontend:
+    container_name: recipe-blog-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+volumes:
+  mysql_data:
