@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeBlog.API.DAL;
 
@@ -10,9 +11,11 @@ using RecipeBlog.API.DAL;
 namespace RecipeBlog.API.Migrations
 {
     [DbContext(typeof(RecipeBlogDbContext))]
-    partial class RecipeBlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105101256_RecipeProduct")]
+    partial class RecipeProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +36,12 @@ namespace RecipeBlog.API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("RecipeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
 
                     b.ToTable("Products");
                 });
@@ -76,11 +84,16 @@ namespace RecipeBlog.API.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("RecipeId", "ProductId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("RecipeProducts", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RecipeProduct");
                 });
 
             modelBuilder.Entity("RecipeBlog.API.Models.User", b =>
@@ -105,10 +118,17 @@ namespace RecipeBlog.API.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("RecipeBlog.API.Models.Product", b =>
+                {
+                    b.HasOne("RecipeBlog.API.Models.Recipe", null)
+                        .WithMany("Products")
+                        .HasForeignKey("RecipeId");
+                });
+
             modelBuilder.Entity("RecipeBlog.API.Models.Recipe", b =>
                 {
                     b.HasOne("RecipeBlog.API.Models.User", "User")
-                        .WithMany("Recipes")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -125,10 +145,14 @@ namespace RecipeBlog.API.Migrations
                         .IsRequired();
 
                     b.HasOne("RecipeBlog.API.Models.Recipe", "Recipe")
-                        .WithMany("RecipeProducts")
+                        .WithMany()
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("RecipeBlog.API.Models.User", null)
+                        .WithMany("RecipeProducts")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Product");
 
@@ -142,12 +166,12 @@ namespace RecipeBlog.API.Migrations
 
             modelBuilder.Entity("RecipeBlog.API.Models.Recipe", b =>
                 {
-                    b.Navigation("RecipeProducts");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("RecipeBlog.API.Models.User", b =>
                 {
-                    b.Navigation("Recipes");
+                    b.Navigation("RecipeProducts");
                 });
 #pragma warning restore 612, 618
         }

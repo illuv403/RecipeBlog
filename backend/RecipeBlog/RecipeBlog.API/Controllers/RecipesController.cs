@@ -33,14 +33,22 @@ namespace RecipeBlog.API.Controllers
             if (page < 1) return BadRequest();
            
             var total = await _context.Recipes.CountAsync();
-            var recipes = await _context.Recipes.Include(r => r.User).Skip((page - 1) * 6).Take(6).ToListAsync();
+            var recipes = await _context.Recipes.Include(r => r.User)
+                .Include(r => r.RecipeProducts)
+                    .ThenInclude(rp => rp.Product)
+                .Skip((page - 1) * 6).Take(6).ToListAsync();
 
-            var recipesToReturn = recipes.Select(async r => new RecipeDTO(
+            var recipesToReturn = recipes.Select(async r  => new RecipeDTO(
                 Id: r.Id,
                 Title: lang=="pl" ? (await client.TranslateTextAsync(r.Title, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Title,
                 Description: lang=="pl" ? (await client.TranslateTextAsync(r.Description, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Description,
                 CreatedAt: r.CreatedAt,
-                AuthorName: r.User.FullName
+                AuthorName: r.User.FullName,
+                Products: r.RecipeProducts.Select(rp => new ResponseProductDTO(
+                        Name: rp.Product.Name,
+                        Amount: rp.Amount,
+                        MeasureUnit: rp.Product.MeasureUnit
+                    )).ToList()
             )).ToList();
             
             var totalPages = (int)Math.Ceiling((double)total / 6);
@@ -102,12 +110,38 @@ namespace RecipeBlog.API.Controllers
         // POST: api/Recipe
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Recipe>> PostRecipe(Recipe recipe)
-        {
-            _context.Recipes.Add(recipe);
+        public async Task<ActionResult> PostRecipe([FromBody]CreateRecipeDTO recipe)
+        {   
+            var user = _context.Users.SingleOrDefault(u => u.Email == recipe.Email);
+            
+            if (user == null) return NotFound();
+
+            var newRecipe = new Recipe
+            {
+                Title = recipe.Title,
+                Description = recipe.Description,
+                UserId = user.Id,
+                CreatedAt = DateTime.UtcNow
+            };
+            
+            _context.Recipes.Add(newRecipe);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRecipe", new { id = recipe.Id }, recipe);
+            foreach (var product in recipe.Products)
+            {
+                var rp = new RecipeProduct
+                {
+                    RecipeId = newRecipe.Id,
+                    ProductId = product.ProductId,
+                    Amount = product.Amount
+                };
+                
+                _context.RecipeProducts.Add(rp);
+            }
+            
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // DELETE: api/Recipe/5

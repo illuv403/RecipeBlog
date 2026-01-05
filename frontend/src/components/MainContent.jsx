@@ -213,7 +213,7 @@ export default function MainContent() {
                       {card.result.authorName}
                     </Typography>
                     <Typography variant="caption">
-                      {new Date(card.result.createdAt).toLocaleDateString()}
+                      {new Date(card.result.createdAt).toDateString()}
                     </Typography>
                   </Box>
                 </StyledCard>

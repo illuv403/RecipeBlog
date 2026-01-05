@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeBlog.API.DAL;
 
@@ -10,9 +11,11 @@ using RecipeBlog.API.DAL;
 namespace RecipeBlog.API.Migrations
 {
     [DbContext(typeof(RecipeBlogDbContext))]
-    partial class RecipeBlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105121559_RecipeProductContext")]
+    partial class RecipeProductContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,7 +83,7 @@ namespace RecipeBlog.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("RecipeProducts", (string)null);
+                    b.ToTable("RecipeProducts");
                 });
 
             modelBuilder.Entity("RecipeBlog.API.Models.User", b =>

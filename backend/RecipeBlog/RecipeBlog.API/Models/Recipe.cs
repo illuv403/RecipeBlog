@@ -7,7 +7,7 @@ public class Recipe
     public string Description { get; set; }
     public DateTime CreatedAt { get; set; }
     
-    public ICollection<Product> Products { get; set; } = new List<Product>();
+    public ICollection<RecipeProduct> RecipeProducts { get; set; } = new List<RecipeProduct>();
     public int UserId { get; set; }
     public User User { get; set; } = null!;
 }

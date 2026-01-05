@@ -115,6 +115,13 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
             {recipe.result.title}
           </Typography>
 
+          {recipe.result.products.map((product) => (
+            <Typography key={product.id} variant="body1">
+              {product.name} {product.amount}
+              {product.measureUnit}
+            </Typography>
+          ))}
+
           <Divider sx={{ mb: 2 }} />
 
           <Typography
@@ -137,7 +144,7 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
               color="text.primary"
               sx={{ mb: 2, ml: "auto" }}
             >
-              {new Date(recipe.result.createdAt).toLocaleDateString()}
+              {new Date(recipe.result.createdAt).toDateString()}
             </Typography>
           </Box>
 
