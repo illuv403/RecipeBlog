@@ -67,12 +67,35 @@
         "label": "Description",
         "placeholder": "Describe how to make it..."
       },
+      "product": {
+        "selectProduct": "Select product",
+        "amount": "Amount",
+        "searchProducts": "Search products"
+      },
       "submit": "Create Recipe"
+    },
+    "states": {
+      "loading": "Loading..."
+    },
+    "errors": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required",
+      "productRequired": "Please select a product",
+      "amountRequired": "Please provide an amount",
+      "productExists": "This product is already in the list",
+      "atLeastOneProduct": "Please add at least one product"
     }
   },
   "appBar": {
     "signIn": "Sign in",
     "signUp": "Sign up",
-    "menuButton": "Menu button"
+    "menuButton": "Menu button",
+    "logout": "Log out"
+  },
+  "auth": {
+    "errors": {
+      "loginFailed": "An error occurred while logging in",
+      "signupFailed": "An error occurred while signing up"
+    }
   }
 }

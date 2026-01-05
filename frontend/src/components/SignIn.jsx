@@ -112,7 +112,7 @@ export default function SignIn({ onClose, setSignedIn, ...props }) {
         localStorage.setItem("email", email);
       })
       .then(function (error) {
-        if (error) alert("An error occured while logging in");
+        if (error) alert(t("auth.errors.loginFailed"));
       });
     setSignedIn();
     onClose();

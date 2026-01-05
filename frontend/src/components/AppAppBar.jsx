@@ -91,7 +91,7 @@ export default function AppAppBar({
                 size="small"
                 onClick={setLoggedOut}
               >
-                Log out
+                {t("appBar.logout")}
               </Button>
             ) : (
               <Box>
@@ -145,6 +145,17 @@ export default function AppAppBar({
                   </IconButton>
                 </Box>
                 {loggedIn ? (
+                  <MenuItem>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      fullWidth
+                      onClick={setSignUp}
+                    >
+                      {t("appBar.logout")}
+                    </Button>
+                  </MenuItem>
+                ) : (
                   <Box>
                     <MenuItem>
                       <Button
@@ -167,17 +178,6 @@ export default function AppAppBar({
                       </Button>
                     </MenuItem>
                   </Box>
-                ) : (
-                  <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      fullWidth
-                      onClick={setSignUp}
-                    >
-                      Log out
-                    </Button>
-                  </MenuItem>
                 )}
               </Box>
             </Drawer>

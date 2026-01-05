@@ -1,7 +1,9 @@
+using DeepL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecipeBlog.API.DAL;
+using RecipeBlog.API.DTO;
 using RecipeBlog.API.Models;
 
 namespace RecipeBlog.API.Controllers
@@ -12,17 +14,29 @@ namespace RecipeBlog.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
+        private readonly IConfiguration _config;
 
-        public ProductsController(RecipeBlogDbContext context)
+        public ProductsController(RecipeBlogDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string lang) 
         {
-            return await _context.Products.ToListAsync();
+            var authKey = _config.GetValue<string>("DeeplAPIKey");
+            var client = new DeepLClient(authKey);
+            var products = await _context.Products.ToListAsync();
+            
+            var productsToReturn = products.Select(async p => new ResponseProductsDTO(
+                    Id: p.Id,
+                    Name: p.Name,
+                    MeasureUnit: p.MeasureUnit
+                )).ToList();
+            
+            return Ok(productsToReturn);
         }
 
         // GET: api/Products/5

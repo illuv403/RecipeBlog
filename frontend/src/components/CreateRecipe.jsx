@@ -51,7 +51,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
   const [productErrorMessage, setProductErrorMessage] = React.useState("");
   const [amountError, setAmountError] = React.useState(false);
   const [amountErrorMessage, setAmountErrorMessage] = React.useState("");
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const fetcher = (url) => {
     const token = localStorage.getItem("token");
@@ -65,14 +65,25 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
     });
   };
 
-  const { data } = useSWR("http://localhost:5004/api/products", fetcher);
+  const { data } = useSWR(
+    `http://localhost:5004/api/products?lang=${i18n.language}`,
+    fetcher,
+  );
+
+  if (!data) {
+    return (
+      <Typography variant="h5" gutterBottom>
+        {t("createRecipe.states.loading")}
+      </Typography>
+    );
+  }
 
   const validateProductInput = () => {
     let isValid = true;
 
     if (!product) {
       setProductError(true);
-      setProductErrorMessage("Please select a product");
+      setProductErrorMessage(t("createRecipe.errors.productRequired"));
       isValid = false;
     } else {
       setProductError(false);
@@ -81,7 +92,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
 
     if (!amount) {
       setAmountError(true);
-      setAmountErrorMessage("Please provide an amount");
+      setAmountErrorMessage(t("createRecipe.errors.amountRequired"));
       isValid = false;
     } else {
       setAmountError(false);
@@ -96,7 +107,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
 
     if (!title || title.trim().length === 0) {
       setTitleError(true);
-      setTitleErrorMessage("Title is required");
+      setTitleErrorMessage(t("createRecipe.errors.titleRequired"));
       isValid = false;
     } else {
       setTitleError(false);
@@ -105,7 +116,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
 
     if (!description || description.trim().length === 0) {
       setDescriptionError(true);
-      setDescriptionErrorMessage("Description is required");
+      setDescriptionErrorMessage(t("createRecipe.errors.descriptionRequired"));
       isValid = false;
     } else {
       setDescriptionError(false);
@@ -113,7 +124,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
     }
 
     if (products.length === 0) {
-      alert("Please add at least one product");
+      alert(t("createRecipe.errors.atLeastOneProduct"));
       isValid = false;
     }
 
@@ -148,14 +159,14 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
     if (!validateProductInput()) return;
     if (products.find((p) => p.productId === product.id)) {
       setProductError(true);
-      setProductErrorMessage("This product is already in the list");
+      setProductErrorMessage(t("createRecipe.errors.productExists"));
       return;
     }
 
     const addProduct = {
-      productId: product.id,
-      name: product.name,
-      measureUnit: product.measureUnit,
+      productId: product.result.id,
+      name: product.result.name,
+      measureUnit: product.result.measureUnit,
       amount: parseInt(amount),
     };
 
@@ -204,7 +215,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
               <Autocomplete
                 options={data}
                 getOptionLabel={(option) =>
-                  `${option.name} (${option.measureUnit})`
+                  `${option.result.name}-${option.result.measureUnit}`
                 }
                 value={product}
                 onChange={(_, val) => setProduct(val)}
@@ -214,18 +225,20 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
                     error={productError}
                     helperText={productErrorMessage}
                     color={productError ? "error" : "primary"}
-                    label="Select Product"
-                    placeholder="Search products..."
+                    label={t("createRecipe.form.product.selectProduct")}
+                    placeholder={t("createRecipe.form.product.searchProducts")}
                   />
                 )}
                 sx={{ flex: 2 }}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
+                isOptionEqualToValue={(option, value) =>
+                  option.result.id === value.id
+                }
               />
               <TextField
                 error={amountError}
                 helperText={amountErrorMessage}
                 color={amountError ? "error" : "primary"}
-                label="Amount"
+                label={t("createRecipe.form.product.amount")}
                 type="number"
                 value={amount}
                 inputProps={{ min: 0 }}
