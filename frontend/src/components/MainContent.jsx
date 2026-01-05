@@ -51,7 +51,7 @@ const StyledTypography = styled(Typography)({
   textOverflow: "ellipsis",
 });
 
-export function Search() {
+export function Search({ onChange, value }) {
   const { t } = useTranslation();
 
   return (
@@ -59,6 +59,8 @@ export function Search() {
       <OutlinedInput
         size="small"
         placeholder={t("recipes.search.placeholder")}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         startAdornment={
           <InputAdornment position="start" sx={{ color: "text.primary" }}>
             <SearchRoundedIcon fontSize="small" />
@@ -78,6 +80,7 @@ export default function MainContent({ loggedIn }) {
   const [selectedRecipe, setSelectedRecipe] = React.useState(null);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [title, setTitle] = React.useState("");
   const { t, i18n } = useTranslation();
 
   const handleCardClick = (recipe) => {
@@ -98,10 +101,30 @@ export default function MainContent({ loggedIn }) {
     setFocusedCardIndex(null);
   };
 
+  const useDebounce = (value, delay = 300) => {
+    const [debounced, setDebounced] = React.useState(value);
+
+    React.useEffect(() => {
+      const id = setTimeout(() => setDebounced(value), delay);
+      return () => clearTimeout(id);
+    }, [value, delay]);
+
+    return debounced;
+  };
+
+  const debouncedTitle = useDebounce(title, 600);
+  const trimmedTitle = debouncedTitle.trim();
+
   const { data, error, mutate } = useSWR(
-    `http://localhost:5004/api/recipes?page=${page}&lang=${i18n.language}`,
+    trimmedTitle
+      ? `http://localhost:5004/api/recipes?page=${page}&lang=${i18n.language}&title=${trimmedTitle}`
+      : `http://localhost:5004/api/recipes?page=${page}&lang=${i18n.language}`,
     fetcher,
   );
+
+  React.useEffect(() => {
+    setPage(1);
+  }, [debouncedTitle]);
 
   if (error) {
     return (
@@ -142,7 +165,11 @@ export default function MainContent({ loggedIn }) {
             <Typography>{t("recipes.subtitle")}</Typography>
           </Box>
           <Box sx={{ display: { xs: "flex", sm: "none" }, width: "100%" }}>
-            <Search />
+            {loggedIn ? (
+              <Search onChange={setTitle} value={title} />
+            ) : (
+              <Box></Box>
+            )}
           </Box>
           <Box
             sx={{
@@ -168,7 +195,11 @@ export default function MainContent({ loggedIn }) {
               )}
             </Box>
             <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-              <Search />
+              {loggedIn ? (
+                <Search onChange={setTitle} value={title} />
+              ) : (
+                <Box></Box>
+              )}
             </Box>
           </Box>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>

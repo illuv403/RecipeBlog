@@ -25,18 +25,29 @@ namespace RecipeBlog.API.Controllers
         // GET: api/Recipe
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page, [FromQuery] string lang)
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page, [FromQuery] string lang, [FromQuery] string? title)
         {
             var authKey = _config.GetValue<string>("DeeplAPIKey");
             var client = new DeepLClient(authKey);
             
             if (page < 1) return BadRequest();
            
-            var total = await _context.Recipes.CountAsync();
-            var recipes = await _context.Recipes.Include(r => r.User)
+            var query = _context.Recipes.Include(r => r.User)
                 .Include(r => r.RecipeProducts)
-                    .ThenInclude(rp => rp.Product)
-                .Skip((page - 1) * 6).Take(6).ToListAsync();
+                .ThenInclude(rp => rp.Product).AsQueryable();
+            
+            if (!string.IsNullOrEmpty(title))
+            {
+                query = query.Where(r =>
+                    r.Title.ToLower().Contains(title.ToLower()));
+            }
+            
+            var total = await query.CountAsync();
+            
+            var recipes = await query
+                .Skip((page - 1) * 6)
+                .Take(6)
+                .ToListAsync();
 
             var recipesToReturn = recipes.Select(async r  => new RecipeDTO(
                 Id: r.Id,
