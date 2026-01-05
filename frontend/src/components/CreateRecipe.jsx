@@ -36,7 +36,7 @@ const Container = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-export default function CreateRecipe(props) {
+export default function CreateRecipe({ onClose, onUpdate, ...props }) {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [product, setProduct] = React.useState(null);
@@ -140,9 +140,8 @@ export default function CreateRecipe(props) {
     await axios.post("http://localhost:5004/api/recipes", recipe, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    setTitle("");
-    setDescription("");
-    setProducts([]);
+    onUpdate();
+    onClose();
   };
 
   const handleProductAdd = () => {

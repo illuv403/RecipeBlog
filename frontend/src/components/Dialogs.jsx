@@ -10,7 +10,7 @@ import SignUp from "./SignUp";
 import CreateRecipe from "./CreateRecipe";
 import { useTranslation } from "react-i18next";
 
-export function SignInDialog({ open, onClose }) {
+export function SignInDialog({ open, onClose, setSignedIn }) {
   return (
     <Dialog
       open={open}
@@ -37,13 +37,13 @@ export function SignInDialog({ open, onClose }) {
           alignItems: "center",
         }}
       >
-        <SignIn onClose={onClose} />
+        <SignIn onClose={onClose} setSignedIn={setSignedIn} />
       </DialogContent>
     </Dialog>
   );
 }
 
-export function SignUpDialog({ open, onClose }) {
+export function SignUpDialog({ open, onClose, setSignedUp }) {
   return (
     <Dialog
       open={open}
@@ -70,7 +70,7 @@ export function SignUpDialog({ open, onClose }) {
           alignItems: "center",
         }}
       >
-        <SignUp onClose={onClose} />
+        <SignUp onClose={onClose} setSignedUp={setSignedUp} />
       </DialogContent>
     </Dialog>
   );
@@ -159,11 +159,11 @@ export function RecipeCardDialog({ open, onClose, recipe }) {
   );
 }
 
-export function CreateRecipeDialog({ open, onClose }) {
+export function CreateRecipeDialog({ open, onClose, onUpdate }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogContent sx={{ p: 0 }}>
-        <CreateRecipe />
+        <CreateRecipe onClose={onClose} onUpdate={onUpdate} />
       </DialogContent>
     </Dialog>
   );

@@ -72,7 +72,7 @@ export function Search() {
   );
 }
 
-export default function MainContent() {
+export default function MainContent({ loggedIn }) {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRecipe, setSelectedRecipe] = React.useState(null);
@@ -98,7 +98,7 @@ export default function MainContent() {
     setFocusedCardIndex(null);
   };
 
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     `http://localhost:5004/api/recipes?page=${page}&lang=${i18n.language}`,
     fetcher,
   );
@@ -154,14 +154,18 @@ export default function MainContent() {
             }}
           >
             <Box>
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                onClick={() => setOpenCreateDialog(true)}
-              >
-                {t("recipes.actions.newRecipe")}
-              </Button>
+              {loggedIn ? (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={() => setOpenCreateDialog(true)}
+                >
+                  {t("recipes.actions.newRecipe")}
+                </Button>
+              ) : (
+                <></>
+              )}
             </Box>
             <Box sx={{ display: { xs: "none", sm: "flex" } }}>
               <Search />
@@ -235,6 +239,7 @@ export default function MainContent() {
           <CreateRecipeDialog
             open={openCreateDialog}
             onClose={() => setOpenCreateDialog(false)}
+            onUpdate={() => mutate()}
           />
         </Box>
       </Box>
