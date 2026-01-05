@@ -55,7 +55,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn({ onClose, ...props }) {
+export default function SignIn({ onClose, setSignedIn, ...props }) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
@@ -114,6 +114,7 @@ export default function SignIn({ onClose, ...props }) {
       .then(function (error) {
         if (error) alert("An error occured while logging in");
       });
+    setSignedIn();
     onClose();
   };
 

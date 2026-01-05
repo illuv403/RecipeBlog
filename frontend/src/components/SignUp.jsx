@@ -55,7 +55,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignUp({ onClose, ...props }) {
+export default function SignUp({ onClose, setSignedUp, ...props }) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
@@ -127,6 +127,7 @@ export default function SignUp({ onClose, ...props }) {
       .then(function (error) {
         if (error) alert("An error occured while signing up");
       });
+    setSignedUp();
     onClose();
   };
 

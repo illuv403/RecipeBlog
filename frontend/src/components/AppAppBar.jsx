@@ -30,7 +30,12 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   padding: "8px 12px",
 }));
 
-export default function AppAppBar({ setSignIn, setSignUp }) {
+export default function AppAppBar({
+  setSignIn,
+  setSignUp,
+  loggedIn,
+  setLoggedOut,
+}) {
   const [open, setOpen] = React.useState(false);
   const { t, i18n } = useTranslation();
 
@@ -79,22 +84,35 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
               ml: "auto",
             }}
           >
-            <Button
-              color="primary"
-              variant="text"
-              size="small"
-              onClick={setSignIn}
-            >
-              {t("appBar.signIn")}
-            </Button>
-            <Button
-              color="primary"
-              variant="contained"
-              size="small"
-              onClick={setSignUp}
-            >
-              {t("appBar.signUp")}
-            </Button>
+            {loggedIn ? (
+              <Button
+                color="primary"
+                variant="text"
+                size="small"
+                onClick={setLoggedOut}
+              >
+                Log out
+              </Button>
+            ) : (
+              <Box>
+                <Button
+                  color="primary"
+                  variant="text"
+                  size="small"
+                  onClick={setSignIn}
+                >
+                  {t("appBar.signIn")}
+                </Button>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={setSignUp}
+                >
+                  {t("appBar.signUp")}
+                </Button>
+              </Box>
+            )}
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
@@ -126,26 +144,41 @@ export default function AppAppBar({ setSignIn, setSignUp }) {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    fullWidth
-                    onClick={setSignUp}
-                  >
-                    {t("appBar.signUp")}
-                  </Button>
-                </MenuItem>
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    fullWidth
-                    onClick={setSignIn}
-                  >
-                    {t("appBar.signIn")}
-                  </Button>
-                </MenuItem>
+                {loggedIn ? (
+                  <Box>
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        fullWidth
+                        onClick={setSignUp}
+                      >
+                        {t("appBar.signUp")}
+                      </Button>
+                    </MenuItem>
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        fullWidth
+                        onClick={setSignIn}
+                      >
+                        {t("appBar.signIn")}
+                      </Button>
+                    </MenuItem>
+                  </Box>
+                ) : (
+                  <MenuItem>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      fullWidth
+                      onClick={setSignUp}
+                    >
+                      Log out
+                    </Button>
+                  </MenuItem>
+                )}
               </Box>
             </Drawer>
           </Box>
