@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RecipeBlog.API.Helpers.Options;
+using RecipeBlog.API.Models;
 
 namespace RecipeBlog.API.Services;
 
@@ -16,7 +17,7 @@ public class TokenService : ITokenService
         _jwtOptions = options.Value;
     }
     
-    public string GenerateToken(string email) 
+    public string GenerateToken(User user) 
     {
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtOptions.Key);
@@ -24,7 +25,8 @@ public class TokenService : ITokenService
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, email)
+            new(JwtRegisteredClaimNames.Sub, user.Email),
+            new (ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
         };
         
         var notBefore = DateTime.UtcNow;

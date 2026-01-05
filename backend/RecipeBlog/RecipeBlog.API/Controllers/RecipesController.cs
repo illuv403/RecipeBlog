@@ -75,6 +75,7 @@ namespace RecipeBlog.API.Controllers
 
         // GET: api/Recipe/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Recipe>> GetRecipe(int id)
         {
             var recipe = await _context.Recipes.FindAsync(id);
@@ -90,6 +91,7 @@ namespace RecipeBlog.API.Controllers
         // PUT: api/Recipe/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> PutRecipe(int id, Recipe recipe)
         {
             if (id != recipe.Id)
@@ -121,6 +123,7 @@ namespace RecipeBlog.API.Controllers
         // POST: api/Recipe
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult> PostRecipe([FromBody]CreateRecipeDTO recipe)
         {   
             var user = _context.Users.SingleOrDefault(u => u.Email == recipe.Email);
@@ -157,6 +160,7 @@ namespace RecipeBlog.API.Controllers
 
         // DELETE: api/Recipe/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteRecipe(int id)
         {
             var recipe = await _context.Recipes.FindAsync(id);

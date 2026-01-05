@@ -1,6 +1,8 @@
+using RecipeBlog.API.Models;
+
 namespace RecipeBlog.API.Services;
 
 public interface ITokenService
 {
-    public string GenerateToken(string email);
+    public string GenerateToken(User user);
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace RecipeBlog.API.Controllers
 {
     [Route("api/session")]
     [ApiController]
+    [Authorize]
     public class SessionController : ControllerBase
     {
         private readonly RecipeBlogDbContext _context;
@@ -24,6 +26,7 @@ namespace RecipeBlog.API.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> CheckUser([FromQuery] LoginDTO login)
         {
             var foundUser = await _context.Users.FirstOrDefaultAsync(x => string.Equals(x.Email, login.Email));
@@ -34,7 +37,7 @@ namespace RecipeBlog.API.Controllers
             
             if (passwordCheckResult == PasswordVerificationResult.Failed) return Unauthorized();
             
-            return Ok(new {Token = _tokenService.GenerateToken(foundUser.Email)});
+            return Ok(new {Token = _tokenService.GenerateToken(foundUser)});
         }
     }
 }
