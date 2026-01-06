@@ -45,7 +45,8 @@
     "states": {
       "loading": "Loading...",
       "error": "Something went wrong while loading recipes."
-    }
+    },
+    "delete": "Delete"
   },
   "footer": {
     "copyright": "Copyright ©"
