@@ -10,7 +10,11 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Pagination from "@mui/material/Pagination";
-import { RecipeCardDialog, CreateRecipeDialog } from "./Dialogs";
+import {
+  RecipeCardDialog,
+  CreateRecipeDialog,
+  CreateRecipeEditDialog,
+} from "./Dialogs";
 import fetcher from "./fetcherProvider";
 import useSWR from "swr";
 import { useTranslation } from "react-i18next";
@@ -80,6 +84,7 @@ export default function MainContent({ loggedIn }) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRecipe, setSelectedRecipe] = React.useState(null);
   const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
+  const [openEditDialog, setOpenEditDialog] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const [title, setTitle] = React.useState("");
   const { t, i18n } = useTranslation();
@@ -279,18 +284,32 @@ export default function MainContent({ loggedIn }) {
                   >
                     {card.result.email === localStorage.getItem("email") ||
                     role === "Admin" ? (
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        size="small"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          await handleDelete(card.result.id);
-                          mutate();
-                        }}
-                      >
-                        {t("recipes.delete")}
-                      </Button>
+                      <>
+                        <Button
+                          color="primary"
+                          variant="contained"
+                          size="small"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleDelete(card.result.id);
+                            mutate();
+                          }}
+                        >
+                          {t("recipes.delete")}
+                        </Button>
+                        <Button
+                          color="primary"
+                          variant="contained"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRecipe(card);
+                            setOpenEditDialog(true);
+                          }}
+                        >
+                          {t("recipes.edit")}
+                        </Button>
+                      </>
                     ) : (
                       <Box></Box>
                     )}
@@ -315,6 +334,12 @@ export default function MainContent({ loggedIn }) {
             open={openCreateDialog}
             onClose={() => setOpenCreateDialog(false)}
             onUpdate={() => mutate()}
+          />
+          <CreateRecipeEditDialog
+            open={openEditDialog}
+            onClose={() => setOpenEditDialog(false)}
+            onUpdate={() => mutate()}
+            recipe={selectedRecipe}
           />
         </Box>
       </Box>

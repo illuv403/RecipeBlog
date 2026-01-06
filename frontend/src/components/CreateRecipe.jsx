@@ -36,7 +36,12 @@ const Container = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-export default function CreateRecipe({ onClose, onUpdate, ...props }) {
+export default function CreateRecipe({
+  onClose,
+  onUpdate,
+  recipe = null,
+  ...props
+}) {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [product, setProduct] = React.useState(null);
@@ -52,6 +57,23 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
   const [amountError, setAmountError] = React.useState(false);
   const [amountErrorMessage, setAmountErrorMessage] = React.useState("");
   const { t, i18n } = useTranslation();
+  const recipeGiven = recipe !== null;
+
+  React.useEffect(() => {
+    if (recipe) {
+      setTitle(recipe.result.title);
+      setDescription(recipe.result.description);
+      setProducts(
+        recipe.result.products.map((p) => ({
+          id: Math.floor(Math.random() * 1000000),
+          productId: p.result.productId,
+          name: p.result.name,
+          measureUnit: p.result.measureUnit,
+          amount: p.result.amount,
+        })),
+      );
+    }
+  }, [recipe]);
 
   const fetcher = (url) => {
     const token = localStorage.getItem("token");
@@ -138,7 +160,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("email");
 
-    const recipe = {
+    const recipeToReturn = {
       email,
       title,
       description,
@@ -148,29 +170,36 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
       })),
     };
 
-    await axios.post("http://localhost:5004/api/recipes", recipe, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    recipeGiven
+      ? await axios.put(
+          `http://localhost:5004/api/recipes/${recipe.result.id}`,
+          recipeToReturn,
+          { headers: { Authorization: `Bearer ${token}` } },
+        )
+      : await axios.post("http://localhost:5004/api/recipes", recipeToReturn, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
     onUpdate();
     onClose();
   };
 
   const handleProductAdd = () => {
     if (!validateProductInput()) return;
-    if (products.find((p) => p.productId === product.id)) {
+    if (products.find((p) => p.productId === product.result.id)) {
       setProductError(true);
       setProductErrorMessage(t("createRecipe.errors.productExists"));
       return;
     }
 
     const addProduct = {
+      id: Math.floor(Math.random() * 1000000),
       productId: product.result.id,
       name: product.result.name,
       measureUnit: product.result.measureUnit,
       amount: parseInt(amount),
     };
 
-    setProducts([...products, addProduct]);
+    setProducts((prev) => [...prev, addProduct]);
     setProduct(null);
     setAmount("");
     setProductError(false);
@@ -180,7 +209,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
   };
 
   const handleProductRemove = (id) => {
-    setProducts(products.filter((p) => p.productId !== id));
+    setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
   return (
@@ -231,7 +260,7 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
                 )}
                 sx={{ flex: 2 }}
                 isOptionEqualToValue={(option, value) =>
-                  option.result.id === value.id
+                  option.result.id === value.result.id
                 }
               />
               <TextField
@@ -260,11 +289,11 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
               <List dense>
                 {products.map((product) => (
                   <ListItem
-                    key={product.productId}
+                    key={product.id}
                     secondaryAction={
                       <IconButton
                         edge="end"
-                        onClick={() => handleProductRemove(product.productId)}
+                        onClick={() => handleProductRemove(product.id)}
                         color="error"
                       >
                         -
@@ -299,7 +328,9 @@ export default function CreateRecipe({ onClose, onUpdate, ...props }) {
               />
             </FormControl>
             <Button type="submit" variant="contained" fullWidth>
-              {t("createRecipe.form.submit")}
+              {recipeGiven
+                ? t("createRecipe.form.edit")
+                : t("createRecipe.form.submit")}
             </Button>
           </Box>
         </Card>
