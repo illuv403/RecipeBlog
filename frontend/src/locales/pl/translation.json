@@ -86,7 +86,8 @@
       "productRequired": "Wybierz produkt",
       "amountRequired": "Podaj ilość",
       "productExists": "Ten produkt jest już na liście",
-      "atLeastOneProduct": "Dodaj przynajmniej jeden produkt"
+      "atLeastOneProduct": "Dodaj przynajmniej jeden produkt",
+      "createError": "Wystąpił błąd podczas tworzenia przepisu."
     }
   },
   "appBar": {

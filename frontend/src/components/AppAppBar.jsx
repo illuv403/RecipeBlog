@@ -181,6 +181,14 @@ export default function AppAppBar({
                 )}
               </Box>
             </Drawer>
+            <Select
+              onChange={handleLanguageChange}
+              value={i18n.language || "en"}
+              sx={{ minWidth: 75 }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="pl">Polish</MenuItem>
+            </Select>
           </Box>
         </StyledToolbar>
       </Container>

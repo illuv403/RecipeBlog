@@ -86,7 +86,8 @@
       "productRequired": "Please select a product",
       "amountRequired": "Please provide an amount",
       "productExists": "This product is already in the list",
-      "atLeastOneProduct": "Please add at least one product"
+      "atLeastOneProduct": "Please add at least one product",
+      "createError": "There was an error when creating your recipe"
     }
   },
   "appBar": {

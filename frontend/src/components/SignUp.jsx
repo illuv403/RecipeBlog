@@ -103,32 +103,34 @@ export default function SignUp({ onClose, setSignedUp, ...props }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateInputs()) return;
-    const [FullName, UserEmail, UserPassword] = [name, email, password];
-    await axios
-      .post(
-        "http://localhost:5004/api/users",
-        {},
-        {
-          params: {
-            FullName,
-            UserEmail,
-            UserPassword,
+    try {
+      const [FullName, UserEmail, UserPassword] = [name, email, password];
+      await axios
+        .post(
+          "http://localhost:5004/api/users",
+          {},
+          {
+            params: {
+              FullName,
+              UserEmail,
+              UserPassword,
+            },
           },
-        },
-      )
-      .then(function (response) {
-        const token = response.data.token;
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const email = payload.sub;
+        )
+        .then(function (response) {
+          const token = response.data.token;
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          const email = payload.sub;
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("email", email);
-      })
-      .then(function (error) {
-        if (error) alert(t("auth.errors.signupFailed"));
-      });
-    setSignedUp();
-    onClose();
+          localStorage.setItem("token", token);
+          localStorage.setItem("email", email);
+        });
+
+      setSignedUp();
+      onClose();
+    } catch (error) {
+      alert(t("auth.errors.signupFailed"));
+    }
   };
 
   return (

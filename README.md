@@ -76,7 +76,12 @@ Start the frontend
 ```bash
 dotnet run
 ```
+or
 
+```bash
+docker compose up --build -d
+```
+from the root of the project
 
 ## Usage
 

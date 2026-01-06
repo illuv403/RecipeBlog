@@ -112,7 +112,7 @@ export default function CreateRecipe({
       setProductErrorMessage("");
     }
 
-    if (!amount) {
+    if (!amount || amount <= 0) {
       setAmountError(true);
       setAmountErrorMessage(t("createRecipe.errors.amountRequired"));
       isValid = false;
@@ -155,32 +155,40 @@ export default function CreateRecipe({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateFormInputs()) return;
+    try {
+      if (!validateFormInputs()) return;
 
-    const token = localStorage.getItem("token");
-    const email = localStorage.getItem("email");
+      const token = localStorage.getItem("token");
+      const email = localStorage.getItem("email");
 
-    const recipeToReturn = {
-      email,
-      title,
-      description,
-      products: products.map((p) => ({
-        productId: p.productId,
-        amount: p.amount,
-      })),
-    };
+      const recipeToReturn = {
+        email,
+        title,
+        description,
+        products: products.map((p) => ({
+          productId: p.productId,
+          amount: p.amount,
+        })),
+      };
 
-    recipeGiven
-      ? await axios.put(
-          `http://localhost:5004/api/recipes/${recipe.result.id}`,
-          recipeToReturn,
-          { headers: { Authorization: `Bearer ${token}` } },
-        )
-      : await axios.post("http://localhost:5004/api/recipes", recipeToReturn, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-    onUpdate();
-    onClose();
+      recipeGiven
+        ? await axios.put(
+            `http://localhost:5004/api/recipes/${recipe.result.id}`,
+            recipeToReturn,
+            { headers: { Authorization: `Bearer ${token}` } },
+          )
+        : await axios.post(
+            "http://localhost:5004/api/recipes",
+            recipeToReturn,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+      onUpdate();
+      onClose();
+    } catch (error) {
+      alert(t("createRecipe.errors.createError"));
+    }
   };
 
   const handleProductAdd = () => {

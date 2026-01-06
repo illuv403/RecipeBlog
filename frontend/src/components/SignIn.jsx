@@ -91,31 +91,32 @@ export default function SignIn({ onClose, setSignedIn, ...props }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateInputs()) return;
-    const [Email, Password] = [email, password];
-    await axios
-      .post(
-        "http://localhost:5004/api/session/login",
-        {},
-        {
-          params: {
-            Email,
-            Password,
+    try {
+      const [Email, Password] = [email, password];
+      await axios
+        .post(
+          "http://localhost:5004/api/session/login",
+          {},
+          {
+            params: {
+              Email,
+              Password,
+            },
           },
-        },
-      )
-      .then(function (response) {
-        const token = response.data.token;
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const email = payload.sub;
+        )
+        .then(function (response) {
+          const token = response.data.token;
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          const email = payload.sub;
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("email", email);
-      })
-      .then(function (error) {
-        if (error) alert(t("auth.errors.loginFailed"));
-      });
-    setSignedIn();
-    onClose();
+          localStorage.setItem("token", token);
+          localStorage.setItem("email", email);
+        });
+      setSignedIn();
+      onClose();
+    } catch (error) {
+      alert(t("auth.errors.loginFailed"));
+    }
   };
 
   return (
