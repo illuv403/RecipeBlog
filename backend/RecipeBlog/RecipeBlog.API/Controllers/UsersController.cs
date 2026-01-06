@@ -31,6 +31,21 @@ namespace RecipeBlog.API.Controllers
         {
             return await _context.Users.ToListAsync();
         }
+        
+        [HttpGet("short")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<ResponseShortUserDTO>>> GetShortenedUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+
+            var usersToReturn = users.Select(u => new ResponseShortUserDTO(
+                FullName: u.FullName,
+                Email: u.Email,
+                IsAdmin: u.IsAdmin
+            ));
+            
+            return Ok(usersToReturn);   
+        }
 
         // GET: api/Users/5
         [HttpGet("{id}")]

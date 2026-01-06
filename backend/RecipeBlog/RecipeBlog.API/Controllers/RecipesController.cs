@@ -15,7 +15,7 @@ namespace RecipeBlog.API.Controllers
     {
         private readonly RecipeBlogDbContext _context;
         private readonly IConfiguration _config;
-        
+
         public RecipesController(RecipeBlogDbContext context, IConfiguration config)
         {
             _context = context;
@@ -25,45 +25,57 @@ namespace RecipeBlog.API.Controllers
         // GET: api/Recipe
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page, [FromQuery] string lang, [FromQuery] string? title)
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes([FromQuery] int page, [FromQuery] string lang,
+            [FromQuery] string? title)
         {
             var authKey = _config.GetValue<string>("DeeplAPIKey");
             var client = new DeepLClient(authKey);
-            
+
             if (page < 1) return BadRequest();
-           
+
             var query = _context.Recipes.Include(r => r.User)
                 .Include(r => r.RecipeProducts)
                 .ThenInclude(rp => rp.Product).AsQueryable();
-            
+
             if (!string.IsNullOrEmpty(title))
             {
                 query = query.Where(r =>
                     r.Title.ToLower().Contains(title.ToLower()));
             }
-            
+
             var total = await query.CountAsync();
-            
+
             var recipes = await query
                 .Skip((page - 1) * 6)
                 .Take(6)
                 .ToListAsync();
 
-            var recipesToReturn = recipes.Select(async r  => new RecipeDTO(
+            var recipesToReturn = recipes.Select(async r => new RecipeDTO(
                 Id: r.Id,
-                Title: lang=="pl" ? (await client.TranslateTextAsync(r.Title, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Title,
-                Description: lang=="pl" ? (await client.TranslateTextAsync(r.Description, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Description,
+                Title: lang == "pl"
+                    ? (await client.TranslateTextAsync(r.Title, LanguageCode.English, LanguageCode.Polish)).ToString()
+                    : r.Title,
+                Description: lang == "pl"
+                    ? (await client.TranslateTextAsync(r.Description, LanguageCode.English, LanguageCode.Polish))
+                    .ToString()
+                    : r.Description,
                 CreatedAt: r.CreatedAt,
                 AuthorName: r.User.FullName,
                 Email: r.User.Email,
                 Products: r.RecipeProducts.Select(async rp => new ResponseProductDTO(
-                        ProductId: rp.ProductId,
-                        Name: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.Name, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.Name,
-                        Amount: rp.Amount,
-                        MeasureUnit: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.MeasureUnit, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.MeasureUnit
-                    )).ToList()
+                    ProductId: rp.ProductId,
+                    Name: lang == "pl"
+                        ? (await client.TranslateTextAsync(rp.Product.Name, LanguageCode.English, LanguageCode.Polish))
+                        .ToString()
+                        : rp.Product.Name,
+                    Amount: rp.Amount,
+                    MeasureUnit: lang == "pl"
+                        ? (await client.TranslateTextAsync(rp.Product.MeasureUnit, LanguageCode.English,
+                            LanguageCode.Polish)).ToString()
+                        : rp.Product.MeasureUnit
+                )).ToList()
             )).ToList();
-            
+
             var totalPages = (int)Math.Ceiling((double)total / 6);
 
             var returnBody = new
@@ -71,8 +83,31 @@ namespace RecipeBlog.API.Controllers
                 totalPages,
                 recipesToReturn
             };
-            
+
             return Ok(returnBody);
+        }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetAllRecipes()
+        {
+            return Ok(await _context.Recipes.ToListAsync());
+        }
+
+        [HttpGet("short")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ResponseShortRecipeDTO>> GetShortenedRecipes()
+        {
+            var recipes = await _context.Recipes.Include(recipe => recipe.User).ToListAsync();
+
+            var recipesToReturn = recipes.Select(r => new ResponseShortRecipeDTO(
+                Title: r.Title,
+                Description: r.Description,
+                CreatedAt: r.CreatedAt,
+                AuthorName: r.User.FullName
+            ));
+            
+            return Ok(recipesToReturn);
         }
 
         // GET: api/Recipe/5
@@ -94,11 +129,12 @@ namespace RecipeBlog.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> PutRecipe(int id, [FromBody]CreateRecipeDTO recipe)
+        public async Task<IActionResult> PutRecipe(int id, [FromBody] CreateRecipeDTO recipe)
         {
-            var recipeToUpdate = await _context.Recipes.Include(r => r.RecipeProducts).FirstOrDefaultAsync(r => r.Id == id);
+            var recipeToUpdate =
+                await _context.Recipes.Include(r => r.RecipeProducts).FirstOrDefaultAsync(r => r.Id == id);
             if (recipeToUpdate == null) return NotFound();
-            
+
             recipeToUpdate.Title = recipe.Title;
             recipeToUpdate.Description = recipe.Description;
             recipeToUpdate.RecipeProducts.Clear();
@@ -107,14 +143,14 @@ namespace RecipeBlog.API.Controllers
             {
                 recipeToUpdate.RecipeProducts.Add(new RecipeProduct
                 {
-                   RecipeId = id,
-                   ProductId = product.ProductId,
-                   Amount = product.Amount
+                    RecipeId = id,
+                    ProductId = product.ProductId,
+                    Amount = product.Amount
                 });
             }
-            
+
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
 
@@ -122,10 +158,10 @@ namespace RecipeBlog.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public async Task<ActionResult> PostRecipe([FromBody]CreateRecipeDTO recipe)
-        {   
+        public async Task<ActionResult> PostRecipe([FromBody] CreateRecipeDTO recipe)
+        {
             var user = _context.Users.SingleOrDefault(u => u.Email == recipe.Email);
-            
+
             if (user == null) return NotFound();
 
             var newRecipe = new Recipe
@@ -135,7 +171,7 @@ namespace RecipeBlog.API.Controllers
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow
             };
-            
+
             _context.Recipes.Add(newRecipe);
             await _context.SaveChangesAsync();
 
@@ -147,10 +183,10 @@ namespace RecipeBlog.API.Controllers
                     ProductId = product.ProductId,
                     Amount = product.Amount
                 };
-                
+
                 _context.RecipeProducts.Add(rp);
             }
-            
+
             await _context.SaveChangesAsync();
 
             return Ok();

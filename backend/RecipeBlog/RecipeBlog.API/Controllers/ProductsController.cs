@@ -39,6 +39,13 @@ namespace RecipeBlog.API.Controllers
             
             return Ok(productsToReturn);
         }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+            return Ok(await _context.Products.ToListAsync());
+        }
         
         // GET: api/Products/5
         [HttpGet("{id}")]
