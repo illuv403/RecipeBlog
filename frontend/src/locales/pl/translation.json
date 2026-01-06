@@ -99,7 +99,8 @@
   "auth": {
     "errors": {
       "loginFailed": "Wystąpił błąd podczas logowania",
-      "signupFailed": "Wystąpił błąd podczas rejestracji"
+      "signupFailed": "Wystąpił błąd podczas rejestracji",
+      "emailExists": "Użytkownik o takiej adresie e-mail już istnieje."
     }
   }
 }

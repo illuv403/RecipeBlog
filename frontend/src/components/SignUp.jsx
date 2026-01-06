@@ -129,7 +129,10 @@ export default function SignUp({ onClose, setSignedUp, ...props }) {
       setSignedUp();
       onClose();
     } catch (error) {
-      alert(t("auth.errors.signupFailed"));
+      if (error.response.status == 400) {
+        alert(t("auth.errors.emailExists"));
+      }
+      alert(t("auth.errors.loginFailed"));
     }
   };
 
