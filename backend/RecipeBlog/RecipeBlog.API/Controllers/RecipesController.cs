@@ -55,6 +55,7 @@ namespace RecipeBlog.API.Controllers
                 Description: lang=="pl" ? (await client.TranslateTextAsync(r.Description, LanguageCode.English, LanguageCode.Polish)).ToString() : r.Description,
                 CreatedAt: r.CreatedAt,
                 AuthorName: r.User.FullName,
+                Email: r.User.Email,
                 Products: r.RecipeProducts.Select(async rp => new ResponseProductDTO(
                         Name: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.Name, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.Name,
                         Amount: rp.Amount,

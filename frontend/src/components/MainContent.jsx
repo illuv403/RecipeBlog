@@ -14,6 +14,7 @@ import { RecipeCardDialog, CreateRecipeDialog } from "./Dialogs";
 import fetcher from "./fetcherProvider";
 import useSWR from "swr";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -82,6 +83,21 @@ export default function MainContent({ loggedIn }) {
   const [page, setPage] = React.useState(1);
   const [title, setTitle] = React.useState("");
   const { t, i18n } = useTranslation();
+  let role = null;
+  if (loggedIn) {
+    const token = localStorage.getItem("token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    role = payload.role;
+  }
+
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    await axios.delete(`http://localhost:5004/api/recipes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
 
   const handleCardClick = (recipe) => {
     setSelectedRecipe(recipe);
@@ -250,6 +266,34 @@ export default function MainContent({ loggedIn }) {
                     <Typography variant="caption">
                       {new Date(card.result.createdAt).toDateString()}
                     </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "16px",
+                    }}
+                  >
+                    {card.result.email === localStorage.getItem("email") ||
+                    role === "Admin" ? (
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        size="small"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await handleDelete(card.result.id);
+                          mutate();
+                        }}
+                      >
+                        {t("recipes.delete")}
+                      </Button>
+                    ) : (
+                      <Box></Box>
+                    )}
                   </Box>
                 </StyledCard>
               </Box>

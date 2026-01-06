@@ -45,7 +45,8 @@
     "states": {
       "loading": "Ładowanie...",
       "error": "Wystąpił błąd podczas ładowania przepisów."
-    }
+    },
+    "delete": "Usuń"
   },
   "footer": {
     "copyright": "Prawa autorskie ©"
