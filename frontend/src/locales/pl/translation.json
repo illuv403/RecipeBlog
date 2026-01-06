@@ -46,7 +46,8 @@
       "loading": "Ładowanie...",
       "error": "Wystąpił błąd podczas ładowania przepisów."
     },
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "edit": "Edytuj"
   },
   "footer": {
     "copyright": "Prawa autorskie ©"
@@ -73,7 +74,8 @@
         "amount": "Kwota",
         "searchProducts": "Wyszukaj produkty"
       },
-      "submit": "Utwórz przepis"
+      "submit": "Utwórz przepis",
+      "edit": "Edytuj"
     },
     "states": {
       "loading": "Ładowanie..."

@@ -57,6 +57,7 @@ namespace RecipeBlog.API.Controllers
                 AuthorName: r.User.FullName,
                 Email: r.User.Email,
                 Products: r.RecipeProducts.Select(async rp => new ResponseProductDTO(
+                        ProductId: rp.ProductId,
                         Name: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.Name, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.Name,
                         Amount: rp.Amount,
                         MeasureUnit: lang=="pl" ? (await client.TranslateTextAsync(rp.Product.MeasureUnit, LanguageCode.English, LanguageCode.Polish)).ToString() : rp.Product.MeasureUnit
@@ -93,31 +94,27 @@ namespace RecipeBlog.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> PutRecipe(int id, Recipe recipe)
+        public async Task<IActionResult> PutRecipe(int id, [FromBody]CreateRecipeDTO recipe)
         {
-            if (id != recipe.Id)
-            {
-                return BadRequest();
-            }
+            var recipeToUpdate = await _context.Recipes.Include(r => r.RecipeProducts).FirstOrDefaultAsync(r => r.Id == id);
+            if (recipeToUpdate == null) return NotFound();
+            
+            recipeToUpdate.Title = recipe.Title;
+            recipeToUpdate.Description = recipe.Description;
+            recipeToUpdate.RecipeProducts.Clear();
 
-            _context.Entry(recipe).State = EntityState.Modified;
-
-            try
+            foreach (var product in recipe.Products)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RecipeExists(id))
+                recipeToUpdate.RecipeProducts.Add(new RecipeProduct
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                   RecipeId = id,
+                   ProductId = product.ProductId,
+                   Amount = product.Amount
+                });
             }
-
+            
+            await _context.SaveChangesAsync();
+            
             return NoContent();
         }
 

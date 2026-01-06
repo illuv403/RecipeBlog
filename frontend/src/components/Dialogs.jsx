@@ -168,3 +168,13 @@ export function CreateRecipeDialog({ open, onClose, onUpdate }) {
     </Dialog>
   );
 }
+
+export function CreateRecipeEditDialog({ open, onClose, onUpdate, recipe }) {
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogContent sx={{ p: 0 }}>
+        <CreateRecipe onClose={onClose} onUpdate={onUpdate} recipe={recipe} />
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -46,7 +46,8 @@
       "loading": "Loading...",
       "error": "Something went wrong while loading recipes."
     },
-    "delete": "Delete"
+    "delete": "Delete",
+    "edit": "Edit"
   },
   "footer": {
     "copyright": "Copyright ©"
@@ -73,7 +74,8 @@
         "amount": "Amount",
         "searchProducts": "Search products"
       },
-      "submit": "Create Recipe"
+      "submit": "Create Recipe",
+      "edit": "Edit"
     },
     "states": {
       "loading": "Loading..."
