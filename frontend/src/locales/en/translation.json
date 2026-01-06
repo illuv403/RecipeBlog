@@ -99,7 +99,7 @@
   "auth": {
     "errors": {
       "loginFailed": "An error occurred while logging in",
-      "signupFailed": "An error occurred while signing up"
+      "signupFailed": "An error occurred while signing up",
       "emailExists": "User with such email already exists"
     }
   }
